@@ -116,11 +116,10 @@
     {
       "type": "Microsoft.Resources/deploymentScripts",
       "apiVersion": "2020-10-01",
-      "name": "sequentialScript",
+      "name": "[concat('dynatrace-update-configuration-', parameters('deploymentNameGuid'))]",
       "location": "[parameters('location')]",
       "kind": "AzurePowerShell",
       "properties": {
-        "azPowerShellVersion": "8.1",
         "environmentVariables": [
           {
             "name": "connectionId",
@@ -129,36 +128,14 @@
           {
             "name": "dynatraceApiKey",
             "value": "[parameters('dynatraceApiKey')]"
-          }, 
-          {
-            "name": "endpoint",
-            "value": "https://webhook.site/67fc63f3-ff55-4154-ac1c-78c1b1d206d3"
           }
         ],
-        "scriptContent": "
-            $jsonBody = @'
-              {
-                  \"key1\": \"$Env:dynatraceApiKey\",
-                  \"key2\": \"$Env:connectionId\"
-              }
-            '@
-
-            $response = Invoke-WebRequest -SkipCertificateCheck `
-                -ContentType 'application/json' `
-                -Method POST `
-                -Uri $Env:endpoint `
-                -Headers @{
-                    'Accept' = 'application/json'
-                    'Authorization' = 'Api-Token ' + $Env:dynatraceApiKey
-                } `
-                -Body $jsonBody
-
-            $DeploymentScriptOutputs['text'] = $response.Content
-
-            ",
         "retentionInterval": "PT1H",
         "timeout": "PT2M",
-        "cleanupPreference": "Always"
+        "containerSettings": {},
+        "cleanupPreference": "Always",
+        "azPowerShellVersion": "8.1",
+        "primaryScriptUri": "https://raw.githubusercontent.com/dmossberg/azure-activation-v2/main/update-monitoring-configuration.ps1"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deploymentScripts', concat('dynatrace-create-connection-', parameters('deploymentNameGuid')))]"
