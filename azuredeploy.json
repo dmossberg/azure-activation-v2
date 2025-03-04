@@ -2,13 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "deploymentSubscription": {
-      "type": "string"
-    },
     "monitoredSubscription": {
-      "type": "string"
-    },
-    "resourceGroup": {
       "type": "string"
     },
     "location": {
@@ -128,7 +122,11 @@
           {
             "name": "dynatraceApiKey",
             "value": "[parameters('dynatraceApiKey')]"
-          }
+          }, 
+          {
+            "name": "dynatraceIntegrationName",
+            "value": "[parameters('dynatraceIntegrationName')]"
+          } 
         ],
         "retentionInterval": "PT1H",
         "timeout": "PT2M",

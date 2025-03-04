@@ -20,7 +20,7 @@ $jsonBody = @"
 }
 "@
 
-$response = Invoke-WebRequest -SkipCertificateCheck `
+Invoke-WebRequest -SkipCertificateCheck `
     -ContentType "application/json" `
     -Method POST `
     -Uri $endpoint `
@@ -29,11 +29,3 @@ $response = Invoke-WebRequest -SkipCertificateCheck `
         "Authorization" = "Api-Token $Env:dynatraceApiKey"
     } `
     -Body ($jsonBody)
-
-if ($response.StatusCode -eq 200) {
-    $jsonResponse = $response.Content | ConvertFrom-Json
-    $DeploymentScriptOutputs = @{}
-    $DeploymentScriptOutputs['hyperscalerAuthServiceObjectId'] = $jsonResponse[0].objectId
-} else {
-    throw "Request failed with status code: $($response)"
-}
