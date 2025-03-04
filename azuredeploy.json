@@ -32,7 +32,7 @@
     "dynatraceIntegrationName": {
       "type": "string"
     },
-    "deploymentNameGuid": {
+    "deploymentGuid": {
       "type": "string",
       "defaultValue": "[newGuid()]"
     }
@@ -41,7 +41,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2024-11-01",
-      "name": "[concat('dynatrace-monitoring-role-', parameters('deploymentNameGuid'))]",
+      "name": "[concat('dynatrace-monitoring-role-', parameters('deploymentGuid'))]",
       "properties": {
         "mode": "Incremental",
         "template": {
@@ -67,7 +67,7 @@
     {
       "type": "Microsoft.Resources/deploymentScripts",
       "apiVersion": "2020-10-01",
-      "name": "[concat('dynatrace-create-connection-', parameters('deploymentNameGuid'))]",
+      "name": "[concat('dynatrace-create-connection-', parameters('deploymentGuid'))]",
       "location": "[parameters('location')]",
       "kind": "AzurePowerShell",
       "properties": {
@@ -116,14 +116,14 @@
     {
       "type": "Microsoft.Resources/deploymentScripts",
       "apiVersion": "2020-10-01",
-      "name": "[concat('dynatrace-update-configuration-', parameters('deploymentNameGuid'))]",
+      "name": "[concat('dynatrace-update-configuration-', parameters('deploymentGuid'))]",
       "location": "[parameters('location')]",
       "kind": "AzurePowerShell",
       "properties": {
         "environmentVariables": [
           {
             "name": "connectionId",
-            "value": "[reference(concat('dynatrace-create-connection-', parameters('deploymentNameGuid'))).outputs.hyperscalerAuthServiceObjectId.value]"
+            "value": "[reference(concat('dynatrace-create-connection-', parameters('deploymentGuid'))).outputs.hyperscalerAuthServiceObjectId]"
           }, 
           {
             "name": "dynatraceApiKey",
@@ -138,7 +138,7 @@
         "primaryScriptUri": "https://raw.githubusercontent.com/dmossberg/azure-activation-v2/main/update-monitoring-configuration.ps1"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deploymentScripts', concat('dynatrace-create-connection-', parameters('deploymentNameGuid')))]"
+        "[resourceId('Microsoft.Resources/deploymentScripts', concat('dynatrace-create-connection-', parameters('deploymentGuid')))]"
       ]
     }
   ]
