@@ -20,20 +20,27 @@ $jsonBody = @"
 ]
 "@
 
-$response = Invoke-WebRequest -SkipCertificateCheck `
-    -ContentType "application/json" `
-    -Method POST `
-    -Uri $endpoint `
-    -Headers @{
-        "Accept" = "application/json"
-        "Authorization" = "Api-Token $Env:dynatraceApiKey"
-    } `
-    -Body ($jsonBody)
+try
+{
+    $response = Invoke-WebRequest -SkipCertificateCheck `
+        -ContentType "application/json" `
+        -Method POST `
+        -Uri $endpoint `
+        -Headers @{
+            "Accept" = "application/json"
+            "Authorization" = "Api-Token $Env:dynatraceApiKey"
+        } `
+        -Body ($jsonBody)
 
-if ($response.StatusCode -eq 200) {
-    $jsonResponse = $response.Content | ConvertFrom-Json
-    $DeploymentScriptOutputs = @{}
-    $DeploymentScriptOutputs['hyperscalerAuthServiceObjectId'] = $jsonResponse[0].objectId
-} else {
-    throw "Request failed with status code: $($response)"
+    if ($response.StatusCode -eq 200) {
+        $jsonResponse = $response.Content | ConvertFrom-Json
+        $DeploymentScriptOutputs = @{}
+        $DeploymentScriptOutputs['hyperscalerAuthServiceObjectId'] = $jsonResponse[0].objectId
+        Write-Output $DeploymentScriptOutputs['hyperscalerAuthServiceObjectId']
+    } else {
+        throw "Request failed with status code: $($response)"
+    }
+}
+catch {
+    throw "Request failed with status code: $($_.ErrorDetails.Message)"
 }
