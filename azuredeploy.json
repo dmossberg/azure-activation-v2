@@ -79,6 +79,14 @@
             "value": "[parameters('dynatraceApiKey')]"
           },
           {
+            "name": "dynatraceEnvironment",
+            "value": "dev"
+          },
+          {
+            "name": "dynatraceConfigurationId",
+            "value": "[parameters('dynatraceIntegrationName')]"
+          },
+          {
             "name": "clientId",
             "value": "[parameters('servicePrincipalAppId')]"
           },
@@ -87,16 +95,8 @@
             "secureValue": "[parameters('servicePrincipalSecretKey')]"
           },
           {
-            "name": "dynatraceEnvironment",
-            "value": "dev"
-          },
-          {
             "name": "directoryId",
             "value": "[subscription().tenantId]"
-          },
-          {
-            "name": "source",
-            "value": "arm_template_subscription"
           }
         ],
         "retentionInterval": "PT1H",
@@ -106,38 +106,6 @@
         "azPowerShellVersion": "8.1",
         "primaryScriptUri": "https://raw.githubusercontent.com/dmossberg/azure-activation-v2/main/create-dynatrace-connection.ps1"
       }
-    },
-    {
-      "type": "Microsoft.Resources/deploymentScripts",
-      "apiVersion": "2020-10-01",
-      "name": "[concat('dynatrace-update-configuration-', parameters('deploymentGuid'))]",
-      "location": "[parameters('location')]",
-      "kind": "AzurePowerShell",
-      "properties": {
-        "environmentVariables": [
-          {
-            "name": "connectionId",
-            "value": "[reference(concat('dynatrace-create-connection-', parameters('deploymentGuid'))).outputs.hyperscalerAuthServiceObjectId]"
-          }, 
-          {
-            "name": "dynatraceApiKey",
-            "value": "[parameters('dynatraceApiKey')]"
-          }, 
-          {
-            "name": "dynatraceIntegrationName",
-            "value": "[parameters('dynatraceIntegrationName')]"
-          } 
-        ],
-        "retentionInterval": "PT1H",
-        "timeout": "PT2M",
-        "containerSettings": {},
-        "cleanupPreference": "Always",
-        "azPowerShellVersion": "8.1",
-        "primaryScriptUri": "https://raw.githubusercontent.com/dmossberg/azure-activation-v2/main/update-monitoring-configuration.ps1"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deploymentScripts', concat('dynatrace-create-connection-', parameters('deploymentGuid')))]"
-      ]
     }
   ]
 }
