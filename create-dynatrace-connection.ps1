@@ -84,6 +84,7 @@ try
     if ($response.StatusCode -eq 200) {
         $configurationObject = $response.Content | ConvertFrom-Json
         $configurationObject.value.azure.credentials[0].connectionId = $activationData['connectionId']
+        $configurationObject.value.enabled = $true
         $activationData['updatedMonitoringConfigurationJson'] = $configurationObject | ConvertTo-Json -Depth 100
     } else {
         throw "Request failed with status code: $($response)"
